@@ -15,6 +15,13 @@
       "when": 1782675600000,
       "tag": "0001_love_letter_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782692342222,
+      "tag": "0002_stiff_tony_stark",
+      "breakpoints": true
     }
   ]
 }

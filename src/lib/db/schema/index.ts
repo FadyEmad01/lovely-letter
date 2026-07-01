@@ -1,2 +1,2 @@
-export { letters, lettersRelations } from "./letters";
+export { letters } from "./letters";
 export { templates } from "./templates";

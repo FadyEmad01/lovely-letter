@@ -1,155 +1,183 @@
-import { Heart, Lock, Shield, Sparkles } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { auth } from "@/lib/auth/server";
+// import Image from "next/image";
+// import { Anton, Great_Vibes } from "next/font/google";
+// import bgImage from "@/assets/images/bg-hero.webp";
 
-export const dynamic = "force-dynamic";
+// const anton = Anton({
+//   weight: "400",
+//   subsets: ["latin"],
+// });
 
-export default async function Home() {
-  const { data: session } = await auth.getSession();
+// const greatVibes = Great_Vibes({
+//   weight: "400",
+//   subsets: ["latin"],
+// });
+
+// export default function Home() {
+//   return (
+//     <main className="relative flex min-h-screen w-full items-center justify-center overflow-hidden">
+      
+//       {/* Background Container - Inset acts as the padding */}
+//       {/* <div className="absolute inset-4 md:inset-6"> */}
+//       <div className="absolute inset-0 mask-radial-from-45% mask-radial-to-75% mask-radial-at-center mask-radial-[75%_100%] opacity-90 ">
+//         <Image
+//           src={bgImage}
+//           width={736}
+//           height={924}
+//           alt="bg hero"
+//           placeholder="blur"
+//           className="absolute inset-0 h-full w-full object-cover object-bottom"
+//         />
+//         {/* Overlay */}
+//         <div className="absolute inset-0 bg-black/40" />
+//       </div>
+
+//       {/* Main Typography Container */}
+//       <div className="relative flex flex-col items-center">
+
+//         {/* Script Font: "The" */}
+//         <div
+//           className={`${greatVibes.className} absolute -left-[15%] -top-[20%] z-20 -rotate-[8deg] text-7xl text-[#F9D5D3] drop-shadow-sm md:-top-[25%] md:text-9xl [-webkit-text-stroke:1px_#42201C] md:[-webkit-text-stroke:2px_#42201C]`}
+//         >
+//           The
+//         </div>
+
+//         {/* Block Font: "TRUE" */}
+//         <div
+//           className={`${anton.className} relative z-10 text-[5.5rem] uppercase leading-[0.85] tracking-wider text-[#FFF7E4] md:text-[10rem] [-webkit-text-stroke:1px_#42201C] md:[-webkit-text-stroke:2px_#42201C] [text-shadow:1px_1px_0_#42201C,2px_2px_0_#42201C,3px_3px_0_#42201C,4px_4px_0_#42201C] md:[text-shadow:1px_1px_0_#42201C,2px_2px_0_#42201C,3px_3px_0_#42201C,4px_4px_0_#42201C,5px_5px_0_#42201C,6px_6px_0_#42201C,7px_7px_0_#42201C,8px_8px_0_#42201C]`}
+//         >
+//           TRUE
+//         </div>
+
+//         {/* Block Font: "HEART" */}
+//         <div
+//           className={`${anton.className} relative z-10 -mt-2 text-[6rem] uppercase leading-[0.85] tracking-normal text-[#FFF7E4] md:-mt-4 md:text-[11rem] [-webkit-text-stroke:1px_#42201C] md:[-webkit-text-stroke:2px_#42201C] [text-shadow:1px_1px_0_#42201C,2px_2px_0_#42201C,3px_3px_0_#42201C,4px_4px_0_#42201C] md:[text-shadow:1px_1px_0_#42201C,2px_2px_0_#42201C,3px_3px_0_#42201C,4px_4px_0_#42201C,5px_5px_0_#42201C,6px_6px_0_#42201C,7px_7px_0_#42201C,8px_8px_0_#42201C]`}
+//         >
+//            HEART
+//         </div>
+
+//         {/* Script Font: "Written" */}
+//         <div
+//           className={`${greatVibes.className} absolute -bottom-[35%] left-1/2 z-30 -translate-x-[40%] -rotate-[8deg] text-7xl text-[#F9D5D3] drop-shadow-sm md:-bottom-[45%] md:text-[11rem] [-webkit-text-stroke:1px_#42201C] md:[-webkit-text-stroke:2px_#42201C]`}
+//         >
+//           Written
+//         </div>
+//       </div>
+//     </main>
+//   )
+// }
+
+"use client";
+
+import Image from "next/image";
+import { Anton, Great_Vibes } from "next/font/google";
+import bgImage from "@/assets/images/bg-hero.webp";
+import { motion } from "framer-motion";
+
+const anton = Anton({
+  weight: "400",
+  subsets: ["latin"],
+});
+
+const greatVibes = Great_Vibes({
+  weight: "400",
+  subsets: ["latin"],
+});
+
+export default function Home() {
+  // 1. Container controls the timing of the staggered text reveal
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.25, delayChildren: 0.4 },
+    },
+  };
+
+  // 2. Heavy block text slides up slightly
+  const blockTextVariants = {
+    hidden: { opacity: 0, y: 40 },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { type: "spring" as const, stiffness: 40, damping: 15 } 
+    },
+  };
+
+  // 3. Script text scales in softly
+  const scriptTextVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    show: { 
+      opacity: 1, 
+      scale: 1, 
+      transition: { type: "spring" as const, stiffness: 30, damping: 15 } 
+    },
+  };
 
   return (
-    <div className="flex min-h-screen flex-col bg-cream">
-      <header className="flex items-center justify-between border-b bg-card/80 backdrop-blur-sm px-6 py-4 sticky top-0 z-10">
-        <div className="flex items-center gap-2">
-          <Heart className="size-6 text-primary" />
-          <span className="text-xl font-bold">Love Letter</span>
-        </div>
-        <div className="flex items-center gap-3">
-          {session?.user ? (
-            <Link href="/dashboard">
-              <Button>Dashboard</Button>
-            </Link>
-          ) : (
-            <>
-              <Link href="/login">
-                <Button variant="ghost">Sign in</Button>
-              </Link>
-              <Link href="/register">
-                <Button>Get Started</Button>
-              </Link>
-            </>
-          )}
-        </div>
-      </header>
+    <main className="relative flex min-h-screen w-full items-center justify-center overflow-hidden">
+      
+      {/* Background Container - Added a subtle, slow zoom-out effect */}
+      <motion.div 
+        initial={{ scale: 1.15, opacity: 0 }}
+        animate={{ scale: 1, opacity: 0.9 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+        className="absolute inset-0 mask-radial-from-45% mask-radial-to-75% mask-radial-at-center mask-radial-[75%_100%]"
+      >
+        <Image
+          src={bgImage}
+          width={736}
+          height={924}
+          alt="bg hero"
+          placeholder="blur"
+          className="absolute inset-0 h-full w-full object-cover object-bottom"
+        />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40" />
+      </motion.div>
 
-      <section className="flex flex-1 flex-col items-center justify-center px-6 py-24 text-center">
-        <div className="mx-auto max-w-3xl space-y-8">
-          <div className="inline-flex items-center gap-2 rounded-full border bg-card px-4 py-1.5 text-sm text-muted-foreground">
-            <Sparkles className="size-4 text-primary" />
-            Encrypted love letters for the ones who matter
-          </div>
+      {/* Main Typography Container */}
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="relative flex flex-col items-center"
+      >
+        {/* Script Font: "The" */}
+        <motion.div
+          variants={scriptTextVariants}
+          className={`${greatVibes.className} absolute -left-[15%] -top-[20%] z-20 -rotate-[8deg] text-7xl text-[#F9D5D3] drop-shadow-sm md:-top-[25%] md:text-9xl [-webkit-text-stroke:1px_#42201C] md:[-webkit-text-stroke:2px_#42201C]`}
+        >
+          The
+        </motion.div>
 
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
-            Write from the <span className="text-primary">heart</span>, share
-            with confidence
-          </h1>
+        {/* Block Font: "TRUE" */}
+        <motion.div
+          variants={blockTextVariants}
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 400 }}
+          className={`${anton.className} relative z-10 text-[5.5rem] uppercase leading-[0.85] tracking-wider text-[#FFF7E4] md:text-[10rem] cursor-default [-webkit-text-stroke:1px_#42201C] md:[-webkit-text-stroke:2px_#42201C] [text-shadow:1px_1px_0_#42201C,2px_2px_0_#42201C,3px_3px_0_#42201C,4px_4px_0_#42201C] md:[text-shadow:1px_1px_0_#42201C,2px_2px_0_#42201C,3px_3px_0_#42201C,4px_4px_0_#42201C,5px_5px_0_#42201C,6px_6px_0_#42201C,7px_7px_0_#42201C,8px_8px_0_#42201C]`}
+        >
+          TRUE
+        </motion.div>
 
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Create beautiful, encrypted love letters with custom templates.
-            Share a private link — optionally password-protected — so your words
-            reach only the right person.
-          </p>
+        {/* Block Font: "HEART" */}
+        <motion.div
+          variants={blockTextVariants}
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 400 }}
+          className={`${anton.className} relative z-10 -mt-2 text-[6rem] uppercase leading-[0.85] tracking-normal text-[#FFF7E4] md:-mt-4 md:text-[11rem] cursor-default [-webkit-text-stroke:1px_#42201C] md:[-webkit-text-stroke:2px_#42201C] [text-shadow:1px_1px_0_#42201C,2px_2px_0_#42201C,3px_3px_0_#42201C,4px_4px_0_#42201C] md:[text-shadow:1px_1px_0_#42201C,2px_2px_0_#42201C,3px_3px_0_#42201C,4px_4px_0_#42201C,5px_5px_0_#42201C,6px_6px_0_#42201C,7px_7px_0_#42201C,8px_8px_0_#42201C]`}
+        >
+           HEART
+        </motion.div>
 
-          <div className="flex items-center justify-center gap-4">
-            {session?.user ? (
-              <Link href="/letters/new">
-                <Button size="lg" className="gap-2 text-base">
-                  <Heart className="size-5" />
-                  Write a Letter
-                </Button>
-              </Link>
-            ) : (
-              <Link href="/register">
-                <Button size="lg" className="gap-2 text-base">
-                  <Heart className="size-5" />
-                  Start Writing Free
-                </Button>
-              </Link>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-t bg-card/50 px-6 py-20">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="mb-12 text-center text-3xl font-bold">How it works</h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="space-y-3 text-center">
-              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10">
-                <Heart className="size-6 text-primary" />
-              </div>
-              <h3 className="font-semibold">1. Write your letter</h3>
-              <p className="text-sm text-muted-foreground">
-                Choose a template and express your feelings. Add a password for
-                extra privacy.
-              </p>
-            </div>
-            <div className="space-y-3 text-center">
-              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10">
-                <Lock className="size-6 text-primary" />
-              </div>
-              <h3 className="font-semibold">2. Encrypted & secure</h3>
-              <p className="text-sm text-muted-foreground">
-                Your message is encrypted with AES-256-GCM. Even we cannot read
-                your private letters.
-              </p>
-            </div>
-            <div className="space-y-3 text-center">
-              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10">
-                <Shield className="size-6 text-primary" />
-              </div>
-              <h3 className="font-semibold">3. Share the link</h3>
-              <p className="text-sm text-muted-foreground">
-                Get a unique, unguessable link. Share it via text, email, or
-                social — only the special one can open it.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-6 py-20">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="mb-12 text-center text-3xl font-bold">Features</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-xl border bg-card p-6">
-              <h3 className="mb-2 font-semibold">End-to-End Encryption</h3>
-              <p className="text-sm text-muted-foreground">
-                Messages are encrypted with AES-256-GCM using your password. No
-                one — not even us — can read them without it.
-              </p>
-            </div>
-            <div className="rounded-xl border bg-card p-6">
-              <h3 className="mb-2 font-semibold">Beautiful Templates</h3>
-              <p className="text-sm text-muted-foreground">
-                Choose from curated designs with custom fonts, colors, and
-                backgrounds to make your letter special.
-              </p>
-            </div>
-            <div className="rounded-xl border bg-card p-6">
-              <h3 className="mb-2 font-semibold">Private Links</h3>
-              <p className="text-sm text-muted-foreground">
-                Every letter gets a unique nanoid slug that cannot be guessed.
-                Optional password adds another layer of security.
-              </p>
-            </div>
-            <div className="rounded-xl border bg-card p-6">
-              <h3 className="mb-2 font-semibold">
-                No Account Required to Read
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Recipients can open your letter without signing up. Just share
-                the link and they see it instantly.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="border-t px-6 py-8 text-center text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} Love Letter. Made with care.</p>
-      </footer>
-    </div>
+        {/* Script Font: "Written" */}
+        <motion.div
+          variants={scriptTextVariants}
+          className={`${greatVibes.className} absolute -bottom-[35%] left-1/2 z-30 -translate-x-[40%] -rotate-[8deg] text-7xl text-[#F9D5D3] drop-shadow-sm md:-bottom-[45%] md:text-[11rem] [-webkit-text-stroke:1px_#42201C] md:[-webkit-text-stroke:2px_#42201C]`}
+        >
+          Written
+        </motion.div>
+      </motion.div>
+    </main>
   );
 }

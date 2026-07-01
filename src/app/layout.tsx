@@ -1,17 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Anton, Great_Vibes, Imperial_Script, Pinyon_Script } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const is = Imperial_Script({
+  variable: "--font-is",
+  weight: ['400']
+});
+const ps = Pinyon_Script({
+  variable: "--font-ps",
+  weight: ['400']
+});
+const anton = Anton({
+  weight: "400",
   subsets: ["latin"],
+  variable: "--font-anton",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const greatVibes = Great_Vibes({
+  weight: "400",
   subsets: ["latin"],
+  variable: "--font-great-vibes",
 });
+
 
 export const metadata: Metadata = {
   title: "Love Letter - Write from the heart",
@@ -27,28 +38,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable}`}
-      suppressHydrationWarning
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme');
-                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                  }
-                } catch(e) {}
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body className="min-h-screen antialiased">
+      <body className={`${is.variable} ${ps.variable} ${anton.variable} ${greatVibes.variable} min-h-screen antialiased`}>
         <TooltipProvider>{children}</TooltipProvider>
       </body>
-    </html>
+    </html >
   );
 }

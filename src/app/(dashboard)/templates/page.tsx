@@ -1,27 +1,9 @@
+import Link from "next/link";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { allThemes } from "@/templates/registry";
 
 export const dynamic = "force-dynamic";
-
-const sampleTemplates = [
-  {
-    id: "classic",
-    name: "Classic Romance",
-    description: "A timeless design with elegant typography",
-    preview: null,
-  },
-  {
-    id: "modern",
-    name: "Modern Love",
-    description: "Clean and minimal for a contemporary feel",
-    preview: null,
-  },
-  {
-    id: "vintage",
-    name: "Vintage Charm",
-    description: "Antique-inspired with warm tones",
-    preview: null,
-  },
-];
 
 export default async function TemplatesPage() {
   return (
@@ -34,19 +16,21 @@ export default async function TemplatesPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {sampleTemplates.map((template) => (
-          <Card
-            key={template.id}
-            className="group cursor-pointer transition-shadow hover:shadow-md"
-          >
+        {allThemes.map((template) => (
+          <Card key={template.id} className="flex flex-col">
             <div className="aspect-[3/4] bg-gradient-to-br from-primary/5 to-primary/20 flex items-center justify-center">
-              <span className="text-6xl">&#10084;</span>
+              <span className="text-6xl">&hearts;</span>
             </div>
-            <CardHeader>
-              <CardTitle className="text-lg">{template.name}</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {template.description}
-              </p>
+            <CardHeader className="flex-1 flex flex-col gap-3">
+              <div>
+                <CardTitle className="text-lg">{template.name}</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {template.description}
+                </p>
+              </div>
+              <Link href={`/letters/new?template=${template.id}`} className="mt-auto">
+                <Button className="w-full">Use This Theme</Button>
+              </Link>
             </CardHeader>
           </Card>
         ))}

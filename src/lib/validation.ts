@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+const validTemplateIds = [
+  "classic-romance",
+  "modern-love",
+  "vintage-charm",
+] as const;
+
 export const letterSchema = z.object({
   recipientName: z
     .string()
@@ -9,7 +15,7 @@ export const letterSchema = z.object({
     .string()
     .min(1, "Your letter cannot be empty — write something from the heart")
     .max(50000, "Your letter is too long (max 50,000 characters)"),
-  templateId: z.string().uuid().optional(),
+  templateId: z.enum(validTemplateIds).optional(),
   password: z
     .string()
     .min(4, "Password must be at least 4 characters long")
