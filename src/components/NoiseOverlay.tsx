@@ -6,7 +6,7 @@ export default function NoiseOverlay() {
       <div
         className="absolute -left-[100%] -top-[100%] h-[300%] w-[300%] animate-noise bg-repeat"
         style={{
-          backgroundImage: 'url("/texture/noise.avif")',
+          backgroundImage: 'url("/texture/noise.webp")',
         }}
       />
     </div>
