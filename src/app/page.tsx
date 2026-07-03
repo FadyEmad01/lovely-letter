@@ -4,12 +4,12 @@ import Image from "next/image";
 import { Anton, Great_Vibes } from "next/font/google";
 import bgImage from "@/assets/images/bg-hero.webp";
 import { motion } from "framer-motion";
-import StackedHeading from "@/components/StackedHeading";
-import LaceBorder from "@/components/LaceBorder";
-import NoiseOverlay from "@/components/NoiseOverlay";
+import StackedHeading from "@/components/landing/StackedHeading";
+import LaceBorder from "@/components/landing/LaceBorder";
+import NoiseOverlay from "@/components/landing/NoiseOverlay";
 
 const anton = Anton({
-  weight: "400",
+  weight: "400",  
   subsets: ["latin"],
 });
 
@@ -52,11 +52,9 @@ export default function Home() {
     <main className="relative flex min-h-screen w-full items-center justify-center overflow-hidden">
       <NoiseOverlay />
       {/* Background Container - Added a subtle, slow zoom-out effect */}
-      <motion.div
-        initial={{ scale: 1.15, opacity: 0 }}
-        animate={{ scale: 1, opacity: 0.9 }}
-        transition={{ duration: 2, ease: "easeOut" }}
-        className="absolute inset-0 mask-radial-from-45% mask-radial-to-75% mask-radial-at-center mask-radial-[75%_100%]"
+      <div
+        // className="absolute inset-0 mask-radial-from-45% mask-radial-to-75% mask-radial-at-center mask-radial-[75%_100%]"
+        className="absolute inset-0 [mask-image:url('/gif/ink.gif')] [mask-size:cover] [mask-repeat:no-repeat] [mask-mode:alpha]"
       >
         <Image
           src={bgImage}
@@ -68,7 +66,7 @@ export default function Home() {
         />
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/40" />
-      </motion.div>
+      </div>
 
       {/* Main Typography Container */}
       <motion.div
