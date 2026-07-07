@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Anton, Great_Vibes, Imperial_Script, Pinyon_Script, Inter, EB_Garamond } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
@@ -54,7 +55,10 @@ export default function RootLayout({
       lang="en"
     >
       <body className={`${is.variable} ${ps.variable} ${anton.variable} ${greatVibes.variable} ${inter.variable} ${ebGaramond.variable} ${advercase.variable} min-h-screen antialiased`}>
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          {children}
+          <Toaster />
+        </TooltipProvider>
       </body>
     </html >
   );

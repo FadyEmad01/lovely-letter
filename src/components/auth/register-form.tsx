@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -15,12 +15,14 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordField } from "@/components/auth/password-field";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth/client";
 import { registerSchema, type RegisterInput } from "@/lib/validation";
 
 export default function RegisterForm() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -29,26 +31,33 @@ export default function RegisterForm() {
       email: "",
       password: "",
     },
+    mode: "onChange",
   });
 
   async function onSubmit(data: RegisterInput) {
-    startTransition(async () => {
+    setIsLoading(true);
+    const toastId = toast.loading("Creating account...");
+
+    try {
       const { error } = await authClient.signUp.email({
         name: data.name,
         email: data.email,
         password: data.password,
       });
+
       if (error) {
-        const message =
-          typeof error === "string"
-            ? error
-            : (error as { message?: string })?.message ||
-              "Something went wrong. Please try again.";
-        form.setError("root", { message });
+        toast.error(error?.message || "Something went wrong", { id: toastId });
+        setIsLoading(false);
         return;
       }
+
+      toast.success("Account created!", { id: toastId });
       router.push("/dashboard");
-    });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      toast.error(message, { id: toastId });
+      setIsLoading(false);
+    }
   }
 
   const nameError = form.formState.errors.name?.message;
@@ -60,7 +69,7 @@ export default function RegisterForm() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           <div className="flex flex-col items-start gap-2 text-start">
-            <h1 className="text-3xl font-bold font-advercase">join us</h1>
+            <h1 className="text-4xl font-normal font-advercase">join us</h1>
           </div>
 
           <Field data-invalid={!!nameError}>
@@ -90,24 +99,18 @@ export default function RegisterForm() {
 
           <Field data-invalid={!!passwordError}>
             <FieldLabel htmlFor="password">Password</FieldLabel>
-            <Input
+            <PasswordField
               id="password"
-              {...form.register("password")}
-              type="password"
+              value={form.watch("password")}
+              onChange={(value) => form.setValue("password", value, { shouldValidate: true })}
+              showStrength
               aria-invalid={!!passwordError}
-              className="bg-white/50"
             />
             <FieldError>{passwordError}</FieldError>
           </Field>
 
-          {form.formState.errors.root && (
-            <p className="text-sm text-destructive">
-              {form.formState.errors.root.message}
-            </p>
-          )}
-
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "Creating account..." : "Create account"}
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "Creating account..." : "Create account"}
           </Button>
 
           {/* <FieldSeparator>Or</FieldSeparator>

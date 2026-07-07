@@ -13,7 +13,7 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-      <div className="relative hidden bg-muted lg:block">
+      <div className="relative hidden bg-muted lg:flex min-h-svh items-center justify-center">
         <Image
           src={image}
           alt="Background"
@@ -27,7 +27,7 @@ export default function RegisterPage() {
           alt="Logo"
           width={320}
           height={320}
-          className="absolute inset-0 m-auto"
+          className="relative z-10"
         />
       </div>
     </div>

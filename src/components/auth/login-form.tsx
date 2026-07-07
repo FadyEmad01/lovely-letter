@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,14 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordField } from "@/components/auth/password-field";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth/client";
 import { loginSchema, type LoginInput } from "@/lib/validation";
 
 export default function LoginForm() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -29,25 +31,38 @@ export default function LoginForm() {
       email: "",
       password: "",
     },
+    mode: "onChange",
   });
 
   async function onSubmit(data: LoginInput) {
-    startTransition(async () => {
+    setIsLoading(true);
+    const toastId = toast.loading("Signing in...");
+
+    try {
       const { error } = await authClient.signIn.email({
         email: data.email,
         password: data.password,
       });
+
       if (error) {
-        const message =
-          typeof error === "string"
-            ? error
-            : (error as { message?: string })?.message ||
-            "Something went wrong. Please try again.";
-        form.setError("root", { message });
+        toast.error(error?.message || "Something went wrong", { id: toastId });
+        setIsLoading(false);
         return;
       }
+
+      toast.success("Signed in successfully!", { id: toastId });
       router.push("/dashboard");
-    });
+    }
+    // catch (err: any) {
+    //   // toast.error("Something went wrong. Please try again.", { id: toastId });
+    //   toast.error(err?.message || "Something went wrong. Please try again.", { id: toastId });
+    //   setIsLoading(false);
+    // }
+    catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      toast.error(message, { id: toastId });
+      setIsLoading(false);
+    }
   }
 
   const emailError = form.formState.errors.email?.message;
@@ -58,7 +73,7 @@ export default function LoginForm() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           <div className="flex flex-col items-start gap-2 text-start">
-            <h1 className="text-3xl font-bold font-advercase">welcome back</h1>
+            <h1 className="text-4xl font-normal font-advercase">welcome back</h1>
 
           </div>
 
@@ -77,25 +92,19 @@ export default function LoginForm() {
           </Field>
 
           <Field data-invalid={!!passwordError}>
-            <FieldLabel  htmlFor="password">Password</FieldLabel>
-            <Input
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <PasswordField
               id="password"
-              {...form.register("password")}
-              type="password"
+              value={form.watch("password")}
+              onChange={(value) => form.setValue("password", value, { shouldValidate: true })}
               aria-invalid={!!passwordError}
-               className="bg-white/50"
+              showStrength={false}
             />
-            <FieldError>{passwordError}</FieldError>
+            {/* <FieldError>{passwordError}</FieldError> */}
           </Field>
 
-          {form.formState.errors.root && (
-            <p className="text-sm text-destructive">
-              {form.formState.errors.root.message}
-            </p>
-          )}
-
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "Signing in..." : "Sign in"}
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "Signing in..." : "Sign in"}
           </Button>
         </FieldGroup>
       </form>
