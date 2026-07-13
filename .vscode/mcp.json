@@ -1,0 +1,12 @@
+{
+	"servers": {
+		"mozaika": {
+			"type": "http",
+			"url": "https://mozaika.design/mcp",
+			"headers": {
+				"Authorization": "Bearer mzk_ff4ujp2Kkkao-6wDj_c18mek9nfOWkA2"
+			}
+		}
+	},
+	"inputs": []
+}
